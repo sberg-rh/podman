@@ -30,6 +30,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+import "github.com/containers/podman/v4/pkg/timestamp"
+
 type updateNameOperation int
 
 const (
@@ -1391,6 +1393,8 @@ func (s *store) imageTopLayerForMapping(image *Image, ristore roImageStore, crea
 }
 
 func (s *store) CreateContainer(id string, names []string, image, layer, metadata string, options *ContainerOptions) (*Container, error) {
+	timestamp.Print(">store.CreateContainer")
+	defer timestamp.Print("<store.CreateContainer")
 	if options == nil {
 		options = &ContainerOptions{}
 	}

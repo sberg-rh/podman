@@ -22,6 +22,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+import "github.com/containers/podman/v4/pkg/timestamp"
+
 const (
 	// _configPath is the path to the containers/containers.conf
 	// inside a given config directory.
@@ -627,6 +629,9 @@ type Destination struct {
 // with cgroupv2v2. Other OCI runtimes are not yet supporting cgroupv2v2. This
 // might change in the future.
 func NewConfig(userConfigPath string) (*Config, error) {
+	timestamp.Print(">config.NewConfig " + userConfigPath)
+	defer timestamp.Print("<config.NewConfig")
+
 	// Generate the default config for the system
 	config, err := DefaultConfig()
 	if err != nil {

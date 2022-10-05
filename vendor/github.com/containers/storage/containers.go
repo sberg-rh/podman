@@ -15,6 +15,8 @@ import (
 	digest "github.com/opencontainers/go-digest"
 )
 
+import "github.com/containers/podman/v4/pkg/timestamp"
+
 // A Container is a reference to a read-write layer with metadata.
 type Container struct {
 	// ID is either one which was specified at create-time, or a random
@@ -275,6 +277,8 @@ func (r *containerStore) datapath(id, key string) string {
 // The caller must hold r.lockfile for reading _or_ writing; lockedForWriting is true
 // if it is held for writing.
 func (r *containerStore) load(lockedForWriting bool) error {
+	timestamp.Print(">containerStore.load()")
+	defer timestamp.Print("<containerStore.load()")
 	needSave := false
 	rpath := r.containerspath()
 	data, err := os.ReadFile(rpath)

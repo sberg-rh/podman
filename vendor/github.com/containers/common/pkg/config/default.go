@@ -23,6 +23,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+import "github.com/containers/podman/v4/pkg/timestamp"
+
 const (
 	// _conmonMinMajorVersion is the major version required for conmon.
 	_conmonMinMajorVersion = 2
@@ -174,6 +176,8 @@ const (
 
 // DefaultConfig defines the default values from containers.conf.
 func DefaultConfig() (*Config, error) {
+	timestamp.Print(">DefaultConfig()")
+	defer timestamp.Print("<DefaultConfig()")
 	defaultEngineConfig, err := defaultConfigFromMemory()
 	if err != nil {
 		return nil, err
@@ -461,6 +465,7 @@ func defaultTmpDir() (string, error) {
 // probeConmon calls conmon --version and verifies it is a new enough version for
 // the runtime expectations the container engine currently has.
 func probeConmon(conmonBinary string) error {
+	timestamp.Print("probeConmon()")
 	cmd := exec.Command(conmonBinary, "--version")
 	var out bytes.Buffer
 	cmd.Stdout = &out

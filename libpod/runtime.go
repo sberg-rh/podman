@@ -54,6 +54,7 @@ const (
 	// conmonMinPatchVersion is the sub-minor version required for conmon.
 	conmonMinPatchVersion = 24
 )
+import "github.com/containers/podman/v4/pkg/timestamp"
 
 // A RuntimeOption is a functional option which alters the Runtime created by
 // NewRuntime
@@ -189,6 +190,8 @@ func NewRuntimeFromConfig(ctx context.Context, userConfig *config.Config, option
 }
 
 func newRuntimeFromConfig(conf *config.Config, options ...RuntimeOption) (*Runtime, error) {
+	timestamp.Print(">newRuntimeFromConfig()")
+	defer timestamp.Print("<newRuntimeFromConfig()")
 	runtime := new(Runtime)
 
 	if conf.Engine.OCIRuntime == "" {
@@ -307,12 +310,15 @@ func getLockManager(runtime *Runtime) (lock.Manager, error) {
 // Make a new runtime based on the given configuration
 // Sets up containers/storage, state store, OCI runtime
 func makeRuntime(runtime *Runtime) (retErr error) {
+	timestamp.Print(">runtime.makeRuntime()")
+	defer timestamp.Print("<runtime.makeRuntime()")
 	// Find a working conmon binary
 	cPath, err := findConmon(runtime.config.Engine.ConmonPath)
 	if err != nil {
 		return err
 	}
 	runtime.conmonPath = cPath
+	timestamp.Print("runtime.makeRuntime()- conmon is: " + cPath)
 
 	if runtime.noStore && runtime.doReset {
 		return fmt.Errorf("cannot perform system reset if runtime is not creating a store: %w", define.ErrInvalidArg)

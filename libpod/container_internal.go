@@ -46,6 +46,8 @@ import (
 	"golang.org/x/sys/unix"
 )
 
+import "github.com/containers/podman/v4/pkg/timestamp"
+
 const (
 	// name of the directory holding the artifacts
 	artifactsDir      = "artifacts"
@@ -429,6 +431,8 @@ func (c *Container) setupStorageMapping(dest, from *storage.IDMappingOptions) {
 
 // Create container root filesystem for use
 func (c *Container) setupStorage(ctx context.Context) error {
+	timestamp.Print(">Container.setupStorage()")
+	defer timestamp.Print("<Container.setupStorage()")
 	if !c.valid {
 		return fmt.Errorf("container %s is not valid: %w", c.ID(), define.ErrCtrRemoved)
 	}
@@ -787,6 +791,8 @@ func (c *Container) getArtifactPath(name string) string {
 
 // save container state to the database
 func (c *Container) save() error {
+	timestamp.Print(">Container.save()")
+	defer timestamp.Print("<Container.save()")
 	if err := c.runtime.state.SaveContainer(c); err != nil {
 		return fmt.Errorf("error saving container %s state: %w", c.ID(), err)
 	}
@@ -797,6 +803,8 @@ func (c *Container) save() error {
 // If recursive is true, each of the container's dependencies will be started.
 // Otherwise, this function will return with error if there are dependencies of this container that aren't running.
 func (c *Container) prepareToStart(ctx context.Context, recursive bool) (retErr error) {
+	timestamp.Print(">Container.prepareToStart()")
+	defer timestamp.Print("<Container.prepareToStart()")
 	// Container must be created or stopped to be started
 	if !c.ensureState(define.ContainerStateConfigured, define.ContainerStateCreated, define.ContainerStateStopped, define.ContainerStateExited) {
 		return fmt.Errorf("container %s must be in Created or Stopped state to be started: %w", c.ID(), define.ErrCtrStateInvalid)
@@ -826,6 +834,7 @@ func (c *Container) prepareToStart(ctx context.Context, recursive bool) (retErr 
 
 	if c.state.State == define.ContainerStateStopped {
 		// Reinitialize the container if we need to
+		timestamp.Print("Container.prepareToStart() - reinit")
 		if err := c.reinit(ctx, false); err != nil {
 			return err
 		}
@@ -1021,6 +1030,8 @@ func (c *Container) completeNetworkSetup() error {
 
 // Initialize a container, creating it in the runtime
 func (c *Container) init(ctx context.Context, retainRetries bool) error {
+	timestamp.Print(">Container.init()")
+	defer timestamp.Print("<Container.init()")
 	// Unconditionally remove conmon temporary files.
 	// We've been running into far too many issues where they block startup.
 	if err := c.removeConmonFiles(); err != nil {

@@ -34,6 +34,8 @@ import (
 	"github.com/vbatts/tar-split/tar/storage"
 )
 
+import "github.com/containers/podman/v4/pkg/timestamp"
+
 const (
 	tarSplitSuffix = ".tar-split.gz"
 	incompleteFlag = "incomplete"
@@ -342,6 +344,12 @@ func (r *layerStore) layerspath() string {
 }
 
 func (r *layerStore) Load() error {
+// load reloads the contents of the store from disk.
+//
+// The caller must hold r.lockfile for reading _or_ writing; lockedForWriting is true
+// if it is held for writing.
+	timestamp.Print(">layerstore.load()")
+	defer timestamp.Print("<layerstore.load()")
 	shouldSave := false
 	rpath := r.layerspath()
 	data, err := ioutil.ReadFile(rpath)
@@ -470,6 +478,8 @@ func (r *layerStore) loadMounts() error {
 }
 
 func (r *layerStore) Save() error {
+	timestamp.Print(">layerStore.Save")
+	defer timestamp.Print("<layerStore.Save")
 	r.mountsLockfile.Lock()
 	defer r.mountsLockfile.Unlock()
 	defer r.mountsLockfile.Touch()
@@ -480,7 +490,13 @@ func (r *layerStore) Save() error {
 }
 
 func (r *layerStore) saveLayers() error {
+<<<<<<< HEAD
 	if !r.IsReadWrite() {
+=======
+	timestamp.Print(">layerStore.saveLayers")
+	defer timestamp.Print("<layerStore.saveLayers")
+	if !r.lockfile.IsReadWrite() {
+>>>>>>> c9c0947fe (Add some timestamps to debug startup speed)
 		return fmt.Errorf("not allowed to modify the layer store at %q: %w", r.layerspath(), ErrStoreIsReadOnly)
 	}
 	if !r.Locked() {
@@ -499,7 +515,13 @@ func (r *layerStore) saveLayers() error {
 }
 
 func (r *layerStore) saveMounts() error {
+<<<<<<< HEAD
 	if !r.IsReadWrite() {
+=======
+	timestamp.Print(">layerStore.saveMounts")
+	defer timestamp.Print("<layerStore.saveMounts")
+	if !r.lockfile.IsReadWrite() {
+>>>>>>> c9c0947fe (Add some timestamps to debug startup speed)
 		return fmt.Errorf("not allowed to modify the layer store at %q: %w", r.layerspath(), ErrStoreIsReadOnly)
 	}
 	if !r.mountsLockfile.Locked() {
@@ -562,7 +584,13 @@ func (s *store) newLayerStore(rundir string, layerdir string, driver drivers.Dri
 	return &rlstore, nil
 }
 
+<<<<<<< HEAD
 func newROLayerStore(rundir string, layerdir string, driver drivers.Driver) (ROLayerStore, error) {
+=======
+func newROLayerStore(rundir string, layerdir string, driver drivers.Driver) (roLayerStore, error) {
+	timestamp.Print(">newROLayerStore")
+	defer timestamp.Print("<newROLayerStore")
+>>>>>>> c9c0947fe (Add some timestamps to debug startup speed)
 	lockfile, err := GetROLockfile(filepath.Join(layerdir, "layers.lock"))
 	if err != nil {
 		return nil, err
@@ -693,7 +721,13 @@ func (r *layerStore) PutAdditionalLayer(id string, parentLayer *Layer, names []s
 }
 
 func (r *layerStore) Put(id string, parentLayer *Layer, names []string, mountLabel string, options map[string]string, moreOptions *LayerOptions, writeable bool, flags map[string]interface{}, diff io.Reader) (*Layer, int64, error) {
+<<<<<<< HEAD
 	if !r.IsReadWrite() {
+=======
+	timestamp.Print(fmt.Sprintf(">layerStore.Put(%s)", id))
+	defer timestamp.Print(fmt.Sprintf("<layerStore.Put(%s)", id))
+	if !r.lockfile.IsReadWrite() {
+>>>>>>> c9c0947fe (Add some timestamps to debug startup speed)
 		return nil, -1, fmt.Errorf("not allowed to create new layers at %q: %w", r.layerspath(), ErrStoreIsReadOnly)
 	}
 	if err := os.MkdirAll(r.rundir, 0700); err != nil {
@@ -809,7 +843,8 @@ func (r *layerStore) Put(id string, parentLayer *Layer, names []string, mountLab
 		}
 	}()
 
-	err := r.Save()
+	var err error
+	err = r.Save()
 	if err != nil {
 		cleanupFailureContext = "saving incomplete layer metadata"
 		return nil, -1, err
@@ -880,7 +915,6 @@ func (r *layerStore) Put(id string, parentLayer *Layer, names []string, mountLab
 		cleanupFailureContext = "saving finished layer metadata"
 		return nil, -1, err
 	}
-
 	layer = copyLayer(layer)
 	succeeded = true
 	return layer, size, err

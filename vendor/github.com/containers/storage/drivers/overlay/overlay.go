@@ -41,6 +41,8 @@ import (
 	"golang.org/x/sys/unix"
 )
 
+import "github.com/containers/podman/v4/pkg/timestamp"
+
 var (
 	// untar defines the untar method
 	untar = chrootarchive.UntarUncompressed
@@ -1317,6 +1319,8 @@ func (d *Driver) Get(id string, options graphdriver.MountOpts) (_ string, retErr
 }
 
 func (d *Driver) get(id string, disableShifting bool, options graphdriver.MountOpts) (_ string, retErr error) {
+	timestamp.Print(">overlay driver get(" + id + ")")
+	defer timestamp.Print("<overlay driver get(" + id + ")")
 	dir, inAdditionalStore := d.dir2(id)
 	if _, err := os.Stat(dir); err != nil {
 		return "", err
@@ -1570,6 +1574,8 @@ func (d *Driver) get(id string, disableShifting bool, options graphdriver.MountO
 	mountTarget := mergedDir
 
 	pageSize := unix.Getpagesize()
+
+	timestamp.Print("Mounting overlayfs")
 
 	if d.options.mountProgram != "" {
 		mountFunc = func(source string, target string, mType string, flags uintptr, label string) error {

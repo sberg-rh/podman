@@ -25,6 +25,8 @@ import (
 	"github.com/spf13/pflag"
 )
 
+import "github.com/containers/podman/v4/pkg/timestamp"
+
 // HelpTemplate is the help template for podman commands
 // This uses the short and long options.
 // command should not use this.
@@ -107,6 +109,7 @@ func Execute() {
 		}
 		fmt.Fprintln(os.Stderr, formatError(err))
 	}
+	timestamp.Print("exiting podman")
 	os.Exit(registry.GetExitCode())
 }
 
@@ -371,6 +374,9 @@ func rootFlags(cmd *cobra.Command, opts *entities.PodmanConfig) {
 
 		pFlags.StringVar(&opts.CPUProfile, "cpu-profile", "", "Path for the cpu-profiling results")
 		pFlags.StringVar(&opts.MemoryProfile, "memory-profile", "", "Path for the memory-profiling results")
+
+		dummy := false
+		pFlags.BoolVar(&dummy, "timestamps", false, "enable timestamps")
 
 		conmonFlagName := "conmon"
 		pFlags.StringVar(&opts.ConmonPath, conmonFlagName, "", "Path of the conmon binary")

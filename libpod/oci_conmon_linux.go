@@ -1260,6 +1260,7 @@ func (r *ConmonOCIRuntime) createOCIContainer(ctr *Container, restoreOptions *Co
 		return 0, err
 	}
 	ctr.state.PID = pid
+	timestamp.Print(fmt.Sprintf("Syncing with conmon pipe, pid =%d", pid))
 
 	conmonPID, err := readConmonPidFile(ctr.config.ConmonPidFile)
 	if err != nil {

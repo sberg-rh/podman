@@ -490,13 +490,9 @@ func (r *layerStore) Save() error {
 }
 
 func (r *layerStore) saveLayers() error {
-<<<<<<< HEAD
-	if !r.IsReadWrite() {
-=======
 	timestamp.Print(">layerStore.saveLayers")
 	defer timestamp.Print("<layerStore.saveLayers")
-	if !r.lockfile.IsReadWrite() {
->>>>>>> c9c0947fe (Add some timestamps to debug startup speed)
+	if !r.IsReadWrite() {
 		return fmt.Errorf("not allowed to modify the layer store at %q: %w", r.layerspath(), ErrStoreIsReadOnly)
 	}
 	if !r.Locked() {
@@ -515,13 +511,9 @@ func (r *layerStore) saveLayers() error {
 }
 
 func (r *layerStore) saveMounts() error {
-<<<<<<< HEAD
-	if !r.IsReadWrite() {
-=======
 	timestamp.Print(">layerStore.saveMounts")
 	defer timestamp.Print("<layerStore.saveMounts")
-	if !r.lockfile.IsReadWrite() {
->>>>>>> c9c0947fe (Add some timestamps to debug startup speed)
+	if !r.IsReadWrite() {
 		return fmt.Errorf("not allowed to modify the layer store at %q: %w", r.layerspath(), ErrStoreIsReadOnly)
 	}
 	if !r.mountsLockfile.Locked() {
@@ -584,13 +576,9 @@ func (s *store) newLayerStore(rundir string, layerdir string, driver drivers.Dri
 	return &rlstore, nil
 }
 
-<<<<<<< HEAD
 func newROLayerStore(rundir string, layerdir string, driver drivers.Driver) (ROLayerStore, error) {
-=======
-func newROLayerStore(rundir string, layerdir string, driver drivers.Driver) (roLayerStore, error) {
 	timestamp.Print(">newROLayerStore")
 	defer timestamp.Print("<newROLayerStore")
->>>>>>> c9c0947fe (Add some timestamps to debug startup speed)
 	lockfile, err := GetROLockfile(filepath.Join(layerdir, "layers.lock"))
 	if err != nil {
 		return nil, err
@@ -721,13 +709,9 @@ func (r *layerStore) PutAdditionalLayer(id string, parentLayer *Layer, names []s
 }
 
 func (r *layerStore) Put(id string, parentLayer *Layer, names []string, mountLabel string, options map[string]string, moreOptions *LayerOptions, writeable bool, flags map[string]interface{}, diff io.Reader) (*Layer, int64, error) {
-<<<<<<< HEAD
-	if !r.IsReadWrite() {
-=======
 	timestamp.Print(fmt.Sprintf(">layerStore.Put(%s)", id))
 	defer timestamp.Print(fmt.Sprintf("<layerStore.Put(%s)", id))
-	if !r.lockfile.IsReadWrite() {
->>>>>>> c9c0947fe (Add some timestamps to debug startup speed)
+	if !r.IsReadWrite() {
 		return nil, -1, fmt.Errorf("not allowed to create new layers at %q: %w", r.layerspath(), ErrStoreIsReadOnly)
 	}
 	if err := os.MkdirAll(r.rundir, 0700); err != nil {

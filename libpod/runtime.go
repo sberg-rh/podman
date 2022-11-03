@@ -42,6 +42,7 @@ import (
 	"github.com/docker/docker/pkg/namesgenerator"
 	spec "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/sirupsen/logrus"
+	"github.com/containers/podman/v4/pkg/timestamp"
 )
 
 const (
@@ -54,7 +55,6 @@ const (
 	// conmonMinPatchVersion is the sub-minor version required for conmon.
 	conmonMinPatchVersion = 24
 )
-import "github.com/containers/podman/v4/pkg/timestamp"
 
 // A RuntimeOption is a functional option which alters the Runtime created by
 // NewRuntime

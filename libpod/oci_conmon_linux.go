@@ -46,6 +46,7 @@ import (
 	"github.com/opencontainers/selinux/go-selinux/label"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
+	"github.com/containers/podman/v4/pkg/timestamp"
 )
 
 const (
@@ -81,7 +82,6 @@ type ConmonOCIRuntime struct {
 // The first path that points to a valid executable will be used.
 // Deliberately private. Someone should not be able to construct this outside of
 // libpod.
-import "github.com/containers/podman/v4/pkg/timestamp"
 
 func newConmonOCIRuntime(name string, paths []string, conmonPath string, runtimeFlags []string, runtimeCfg *config.Config) (OCIRuntime, error) {
 	if name == "" {
